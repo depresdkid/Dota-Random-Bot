@@ -45,7 +45,10 @@ def callback_query(call):
                                                             callback_data='add_item_' + str(count + 1)))
             item_num = randint(0, 303)
             while api.items[item_num].startswith("Рецепт"):
-                item_num += 1
+                if api.items[item_num].startswith("DOTA_Tooltip"):
+                    item_num += 1
+                else:
+                    item_num += 1
             bot.edit_message_text(chat_id=call.message.chat.id,
                                   message_id=call.message.id,
                                   text=call.message.text + "\n" + str(count + 1) + " " + api.items[item_num],
