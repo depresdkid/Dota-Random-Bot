@@ -25,7 +25,7 @@ def send_comand(message):
     if(message.text == 'Рандом'):
         # после 303 идут лесные и ивентовые айтемы
         item_num = randint(0, 303)
-        if api.items[item_num].startswith("Рецепт"):
+        while api.items[item_num].startswith("Рецепт"):
             item_num += 1
         bot.send_message(
             message.chat.id, api.heroes[randint(0, len(api.heroes) - 1)] + " через " + api.items[item_num])
