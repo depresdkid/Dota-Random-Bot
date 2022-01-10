@@ -1,30 +1,10 @@
 import telebot
-import requests
 from random import randint
+
+import api
 import config as cf
 
-
-def get_list(list):
-    hero_name = []
-    list = list.json().get('result').get('heroes')
-    if(not(list)):
-        return 'Ошибка! Список героев не получен'
-    for element in list:
-        hero_name.append(element['localized_name'])
-    return hero_name
-
-
-def get_hero(token):
-    response = requests.get(
-        'https://api.steampowered.com/IEconDOTA2_570/GetHeroes/v0001/', params={'key': token, 'language': 'ru'})
-    if response.status_code == 200:
-        return get_list(response)
-    else:
-        print('Ошибка запроса')
-
-
-heroes = get_hero(cf.STEAM_TOKEN)
-
+api = api.Api(cf.STEAM_TOKEN)
 
 bot = telebot.TeleBot(cf.TELEGRAM_TOKEN)
 
@@ -43,9 +23,12 @@ def send_welcome(message):
 @bot.message_handler(content_types=['text'])
 def send_comand(message):
     if(message.text == 'Рандом'):
-        count_hero = randint(0, len(heroes) - 1)
+        # после 303 идут лесные и ивентовые айтемы
+        item_num = randint(0, 303)
+        if api.items[item_num].startswith("Рецепт"):
+            item_num += 1
         bot.send_message(
-            message.chat.id, heroes[count_hero])
+            message.chat.id, api.heroes[randint(0, len(api.heroes) - 1)] + " через " + api.items[item_num])
 
 
 bot.polling(non_stop=True)
