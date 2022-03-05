@@ -1,6 +1,6 @@
-import telebot
 from random import randint
-
+from enum import Enum
+import telebot
 import api
 import config as cf
 
@@ -14,6 +14,24 @@ rand_bun = telebot.types.KeyboardButton('Рандом')
 markup.add(rand_bun)
 
 
+def rand_item(price_range=0):
+    if price_range == 0:
+        price_range = range(0, 10000)
+    elif price_range == 1:
+        price_range = range(0, 1001)
+    elif price_range == 2:
+        price_range = range(1000, 3001)
+    elif price_range == 3:
+        price_range = range(3001, 10000)
+
+    items = api.clear_items
+    item_num = randint(0, len(items))
+    while items[item_num].cost not in price_range:
+        item_num = randint(0, len(items))
+
+    return api.items[item_num].localized_name
+
+
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     bot.send_message(message.chat.id, 'Привет {0.first_name}!'.format(
@@ -23,15 +41,16 @@ def send_welcome(message):
 @bot.message_handler(content_types=['text'])
 def send_command(message):
     if message.text == 'Рандом':
-        # после 303 идут лесные и ивентовые айтемы
-        item_num = randint(0, 303)
-        while api.items[item_num].startswith("Рецепт"):
-            item_num += 1
+        item = rand_item(1)
         keyboard = telebot.types.InlineKeyboardMarkup()
-        keyboard.add(telebot.types.InlineKeyboardButton(text="Добавить предмет",
-                                                        callback_data='add_item_1'))
+        keyboard.add(telebot.types.InlineKeyboardButton(text="0-1000",
+                                                        callback_data='add_item_1_1'))
+        keyboard.add(telebot.types.InlineKeyboardButton(text="1000-3000",
+                                                        callback_data='add_item_2_1'))
+        keyboard.add(telebot.types.InlineKeyboardButton(text="3000-максимум",
+                                                        callback_data='add_item_3_1'))
         bot.send_message(
-            message.chat.id, api.heroes[randint(0, len(api.heroes) - 1)] + " через\n1 " + api.items[item_num],
+            message.chat.id, api.heroes[randint(0, len(api.heroes))] + " через\n1 " + item,
             reply_markup=keyboard)
 
 
@@ -39,27 +58,25 @@ def send_command(message):
 def callback_query(call):
     if call.data.startswith("add_item"):
         count = int(call.data[-1])
+        price = int(call.data[-3])
         if count < 6:
             keyboard = telebot.types.InlineKeyboardMarkup()
-            keyboard.add(telebot.types.InlineKeyboardButton(text="Добавить предмет",
-                                                            callback_data='add_item_' + str(count + 1)))
-            item_num = randint(0, 303)
-            while api.items[item_num].startswith("Рецепт"):
-                if api.items[item_num].startswith("DOTA_Tooltip"):
-                    item_num += 1
-                else:
-                    item_num += 1
+            keyboard.add(telebot.types.InlineKeyboardButton(text="0-1000",
+                                                            callback_data='add_item_1_' + str(count + 1)))
+            keyboard.add(telebot.types.InlineKeyboardButton(text="1000-3000",
+                                                            callback_data='add_item_2_' + str(count + 1)))
+            keyboard.add(telebot.types.InlineKeyboardButton(text="3000-максимум",
+                                                            callback_data='add_item_3_' + str(count + 1)))
+            item = rand_item(price)
             bot.edit_message_text(chat_id=call.message.chat.id,
                                   message_id=call.message.id,
-                                  text=call.message.text + "\n" + str(count + 1) + " " + api.items[item_num],
+                                  text=call.message.text + "\n" + str(count + 1) + " " + item,
                                   reply_markup=keyboard)
         if count == 5:
-            item_num = randint(0, 303)
-            while api.items[item_num].startswith("Рецепт"):
-                item_num += 1
+            item = rand_item(price)
             bot.edit_message_text(chat_id=call.message.chat.id,
                                   message_id=call.message.id,
-                                  text=call.message.text + "\n" + str(count + 1) + " " + api.items[item_num])
+                                  text=call.message.text + "\n" + str(count + 1) + " " + item)
 
 
 bot.polling(non_stop=True)
