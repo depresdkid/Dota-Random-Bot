@@ -29,7 +29,7 @@ def rand_item(price_range=0):
     while items[item_num].cost not in price_range:
         item_num = randint(0, len(items))
 
-    return api.items[item_num].localized_name
+    return items[item_num]
 
 
 @bot.message_handler(commands=['start'])
@@ -47,10 +47,10 @@ def send_command(message):
                                                         callback_data='add_item_1_1'))
         keyboard.add(telebot.types.InlineKeyboardButton(text="1000-3000",
                                                         callback_data='add_item_2_1'))
-        keyboard.add(telebot.types.InlineKeyboardButton(text="3000-максимум",
+        keyboard.add(telebot.types.InlineKeyboardButton(text="3000+",
                                                         callback_data='add_item_3_1'))
         bot.send_message(
-            message.chat.id, api.heroes[randint(0, len(api.heroes))] + " через\n1 " + item,
+            message.chat.id, api.heroes[randint(0, len(api.heroes))] + " через\n1 " + item.localized_name,
             reply_markup=keyboard)
 
 
@@ -65,18 +65,18 @@ def callback_query(call):
                                                             callback_data='add_item_1_' + str(count + 1)))
             keyboard.add(telebot.types.InlineKeyboardButton(text="1000-3000",
                                                             callback_data='add_item_2_' + str(count + 1)))
-            keyboard.add(telebot.types.InlineKeyboardButton(text="3000-максимум",
+            keyboard.add(telebot.types.InlineKeyboardButton(text="3000+",
                                                             callback_data='add_item_3_' + str(count + 1)))
             item = rand_item(price)
             bot.edit_message_text(chat_id=call.message.chat.id,
                                   message_id=call.message.id,
-                                  text=call.message.text + "\n" + str(count + 1) + " " + item,
+                                  text=call.message.text + "\n" + str(count + 1) + " " + item.localized_name,
                                   reply_markup=keyboard)
         if count == 5:
             item = rand_item(price)
             bot.edit_message_text(chat_id=call.message.chat.id,
                                   message_id=call.message.id,
-                                  text=call.message.text + "\n" + str(count + 1) + " " + item)
+                                  text=call.message.text + "\n" + str(count + 1) + " " + item.localized_name)
 
 
 bot.polling(non_stop=True)
