@@ -49,7 +49,7 @@ class Api(object):
         items_name = []
 
         if not item_list:
-            return 'Ошибка! Список героев не получен'
+            return 'Ошибка! Список предметов не получен'
         for element in item_list.json().get('result').get("items"):
             items_name.append(Item(element['name'], element['localized_name'], element['cost'], element['recipe']))
         return items_name
@@ -80,3 +80,4 @@ class Api(object):
             else:
                 items_name.append(Item(element['name'], element['localized_name'], element['cost'], element['recipe']))
         return items_name
+

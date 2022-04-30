@@ -69,13 +69,13 @@ def callback_query(call):
             item = rand_item(price)
             bot.edit_message_text(chat_id=call.message.chat.id,
                                   message_id=call.message.id,
-                                  text=call.message.text + "\n" + str(count) + " " + item.localized_name,
+                                  text=call.message.text + "\n" + str(count + 1) + " " + item.localized_name,
                                   reply_markup=keyboard)
         if count == 5:
             item = rand_item(price)
             bot.edit_message_text(chat_id=call.message.chat.id,
                                   message_id=call.message.id,
-                                  text=call.message.text + "\n" + str(count) + " " + item.localized_name)
+                                  text=call.message.text + "\n" + str(count + 1) + " " + item.localized_name)
 
 
 bot.polling(non_stop=True)
