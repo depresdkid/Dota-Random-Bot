@@ -2,6 +2,21 @@ import requests
 import endpoints
 from dataclasses import dataclass
 
+bl = ["DOTA_Tooltip",
+      "Aegis",
+      "Refresher Shard",
+      "Cheese",
+      "Necronomicon",
+      "Gem of True Sight",
+      "Рошан",
+      "Карманный Рошан",
+      "Tome of Knowledge",
+      "Smoke of Deceit",
+      "Aghanim\'s Shard — Рошан",
+      "Aghanim\'s Blessing — Рошан",
+      "Aghanim\'s Blessing",
+      "Sentry Ward",
+      "Варды"]
 
 @dataclass
 class Item:
@@ -69,13 +84,11 @@ class Api(object):
         if not item_list:
             return 'Ошибка! Список героев не получен'
         for element in item_list.json().get('result').get("items"):
-            if element['recipe'] == 1 \
-                    or element["cost"] == 0 \
-                    or "DOTA_Tooltip" in element["localized_name"] \
-                    or "Aegis" in element["localized_name"] \
-                    or "Refresher Shard" in element["localized_name"] \
-                    or "Cheese" in element["localized_name"] \
-                    or "Рошан" in element["localized_name"]:
+            if element['recipe'] == 1:
+                pass
+            elif element["cost"] == 0:
+                pass
+            elif element["localized_name"] in bl:
                 pass
             else:
                 items_name.append(Item(element['name'], element['localized_name'], element['cost'], element['recipe']))
