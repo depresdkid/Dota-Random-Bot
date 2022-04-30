@@ -16,7 +16,8 @@ bl = ["DOTA_Tooltip",
       "Aghanim\'s Blessing — Рошан",
       "Aghanim\'s Blessing",
       "Sentry Ward",
-      "Варды"]
+      "Варды",
+      "Flying Courier"]
 
 @dataclass
 class Item:
