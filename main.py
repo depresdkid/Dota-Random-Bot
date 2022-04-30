@@ -41,7 +41,6 @@ def send_welcome(message):
 @bot.message_handler(content_types=['text'])
 def send_command(message):
     if message.text == 'Рандом':
-        item = rand_item(1)
         keyboard = telebot.types.InlineKeyboardMarkup()
         keyboard.add(telebot.types.InlineKeyboardButton(text="0-1000",
                                                         callback_data='add_item_1_1'))
@@ -50,7 +49,7 @@ def send_command(message):
         keyboard.add(telebot.types.InlineKeyboardButton(text="3000+",
                                                         callback_data='add_item_3_1'))
         bot.send_message(
-            message.chat.id, api.heroes[randint(0, len(api.heroes))] + " через\n1 " + item.localized_name,
+            message.chat.id, api.heroes[randint(0, len(api.heroes))] + " через\n",
             reply_markup=keyboard)
 
 
