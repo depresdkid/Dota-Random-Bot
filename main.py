@@ -61,21 +61,21 @@ def callback_query(call):
         if count < 6:
             keyboard = telebot.types.InlineKeyboardMarkup()
             keyboard.add(telebot.types.InlineKeyboardButton(text="0-1000",
-                                                            callback_data='add_item_1_' + str(count + 1)))
+                                                            callback_data='add_item_1_' + str(count)))
             keyboard.add(telebot.types.InlineKeyboardButton(text="1000-3000",
-                                                            callback_data='add_item_2_' + str(count + 1)))
+                                                            callback_data='add_item_2_' + str(count)))
             keyboard.add(telebot.types.InlineKeyboardButton(text="3000+",
-                                                            callback_data='add_item_3_' + str(count + 1)))
+                                                            callback_data='add_item_3_' + str(count)))
             item = rand_item(price)
             bot.edit_message_text(chat_id=call.message.chat.id,
                                   message_id=call.message.id,
-                                  text=call.message.text + "\n" + str(count + 1) + " " + item.localized_name,
+                                  text=call.message.text + "\n" + str(count) + " " + item.localized_name,
                                   reply_markup=keyboard)
         if count == 5:
             item = rand_item(price)
             bot.edit_message_text(chat_id=call.message.chat.id,
                                   message_id=call.message.id,
-                                  text=call.message.text + "\n" + str(count + 1) + " " + item.localized_name)
+                                  text=call.message.text + "\n" + str(count) + " " + item.localized_name)
 
 
 bot.polling(non_stop=True)
