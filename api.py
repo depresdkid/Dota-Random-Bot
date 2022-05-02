@@ -144,13 +144,15 @@ class Api(object):
         if not item_list:
             return 'Ошибка! Список героев не получен'
         for element in item_list.get('result').get("items"):
-            if element['recipe'] == 1:
+            if element["localized_name"] in bl:
+                pass
+            elif element["localized_name"] in consumables:
                 pass
             elif element["cost"] == 0:
                 pass
-            elif element["localized_name"] in bl:
+            elif element["cost"] == 1:
                 pass
-            elif element["localized_name"] in consumables:
+            elif element["recipe"] == 1:
                 pass
             else:
                 items.append(Item(element['name'], element['localized_name'], element['cost'], element['secret_shop'],
