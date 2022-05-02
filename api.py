@@ -2,29 +2,52 @@ import requests
 import endpoints
 from dataclasses import dataclass
 
-bl = ["DOTA_Tooltip",
-      "Aegis",
-      "Refresher Shard",
-      "Cheese",
-      "Necronomicon",
-      "Gem of True Sight",
-      "Рошан",
-      "Карманный Рошан",
-      "Tome of Knowledge",
-      "Smoke of Deceit",
-      "Aghanim\'s Shard — Рошан",
-      "Aghanim\'s Blessing — Рошан",
-      "Aghanim\'s Blessing",
-      "Sentry Ward",
-      "Варды",
-      "Flying Courier"]
+bl = [
+    "DOTA_Tooltip",
+    "Рошан",
+    "Карманный Рошан",
+    "Aghanim\'s Shard — Рошан",
+    "Aghanim\'s Blessing — Рошан",
+    "Aghanim\'s Blessing",
+    "Refresher Shard",
+    "Cheese",
+    "Aegis",
+    "Overflowing Elixir",
+    "Iron Talon",
+    "Fallen Sky",
+    "Necronomicon",
+    "Animal Courier",
+    "Flying Courier",
+    "Infused Raindrops",
+    "Gem of True Sight",
+]
+
+consumables = [
+    "Town Portal Scroll",
+    "Clarity",
+    "Faerie Fire",
+    "Smoke of Deceit",
+    "Sentry Ward",
+    "Варды",
+    "Enchanted Mango",
+    "Healing Salve",
+    "Tango (не свой)",
+    "Tango",
+    "Tome of Knowledge",
+    "Dust of Appearance",
+    "Aghanim\'s Shard",
+    "Bottle"
+]
+
 
 @dataclass
 class Item:
     name: str
     localized_name: str
     cost: int
+    secret_shop: bool
     recipe: bool
+    parent_name: [str]
 
 
 class Api(object):
@@ -56,19 +79,55 @@ class Api(object):
         response = requests.get(
             endpoints.GET_GAME_ITEMS, params={'key': self.token, 'language': 'ru'})
         if response.status_code == 200:
-            return self._get_items_list(response.json())
+            return self._get_items_list_v2(response.json())
         else:
             print('Ошибка запроса')
 
     @staticmethod
     def _get_items_list(item_list):
-        items_name = []
+        items = []
 
         if not item_list:
             return 'Ошибка! Список предметов не получен'
         for element in item_list.get('result').get("items"):
-            items_name.append(Item(element['name'], element['localized_name'], element['cost'], element['recipe']))
-        return items_name
+            items.append(Item(element['name'], element['localized_name'], element['cost'], element['secret_shop'],
+                              element['recipe'], []))
+
+        return items
+
+    @staticmethod
+    def _get_items_list_v2(item_list):
+        items = []
+
+        if not item_list:
+            return 'Ошибка! Список предметов не получен'
+        for element in item_list.get('result').get("items"):
+            if element["localized_name"] in bl:
+                pass
+            elif element["localized_name"] in consumables:
+                pass
+            elif element["cost"] == 0:
+                pass
+            elif element["cost"] == 1:
+                pass
+            else:
+                items.append(Item(element['name'], element['localized_name'], element['cost'], element['secret_shop'],
+                                  element['recipe'], []))
+
+        """Проверка на рецепты без айтема(было 2 штуки)"""
+        for i in items:
+            if i.localized_name.startswith("Рецепт:"):
+                item = i.localized_name.replace("Рецепт: ", "")
+                find = False
+                for it in items:
+                    if it.localized_name == item:
+                        find = True
+                if find:
+                    pass
+                else:
+                    items.remove(i)
+
+        return items
 
     def _preload_clear_items(self):
         response = requests.get(
@@ -80,7 +139,7 @@ class Api(object):
 
     @staticmethod
     def _get_clear_items_list(item_list):
-        items_name = []
+        items = []
 
         if not item_list:
             return 'Ошибка! Список героев не получен'
@@ -91,7 +150,9 @@ class Api(object):
                 pass
             elif element["localized_name"] in bl:
                 pass
+            elif element["localized_name"] in consumables:
+                pass
             else:
-                items_name.append(Item(element['name'], element['localized_name'], element['cost'], element['recipe']))
-        return items_name
-
+                items.append(Item(element['name'], element['localized_name'], element['cost'], element['secret_shop'],
+                                  element['recipe'], []))
+        return items
