@@ -56,7 +56,7 @@ class Api(object):
         response = requests.get(
             endpoints.GET_GAME_ITEMS, params={'key': self.token, 'language': 'ru'})
         if response.status_code == 200:
-            return self._get_items_list(response)
+            return self._get_items_list(response.json())
         else:
             print('Ошибка запроса')
 
@@ -66,7 +66,7 @@ class Api(object):
 
         if not item_list:
             return 'Ошибка! Список предметов не получен'
-        for element in item_list.json().get('result').get("items"):
+        for element in item_list.get('result').get("items"):
             items_name.append(Item(element['name'], element['localized_name'], element['cost'], element['recipe']))
         return items_name
 
@@ -74,7 +74,7 @@ class Api(object):
         response = requests.get(
             endpoints.GET_GAME_ITEMS, params={'key': self.token, 'language': 'ru'})
         if response.status_code == 200:
-            return self._get_clear_items_list(response)
+            return self._get_clear_items_list(response.json())
         else:
             print('Ошибка запроса')
 
@@ -84,7 +84,7 @@ class Api(object):
 
         if not item_list:
             return 'Ошибка! Список героев не получен'
-        for element in item_list.json().get('result').get("items"):
+        for element in item_list.get('result').get("items"):
             if element['recipe'] == 1:
                 pass
             elif element["cost"] == 0:
